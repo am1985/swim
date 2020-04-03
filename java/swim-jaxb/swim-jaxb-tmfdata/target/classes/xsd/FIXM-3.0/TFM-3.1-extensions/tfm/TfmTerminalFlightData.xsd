@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:fb="http://www.fixm.aero/base/3.0" 
+        xmlns:ff="http://www.fixm.aero/foundation/3.0"
+        xmlns:fx="http://www.fixm.aero/flight/3.0" 
+        xmlns:tx="http://www.fixm.aero/tfm/3.1"
+        xmlns:nas="http://www.faa.aero/nas/3.1" 
+        targetNamespace="http://www.fixm.aero/tfm/3.1"
+        version="2.0.4"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="../../core/base/Base.xsd"/>
+  <import namespace="http://www.fixm.aero/foundation/3.0" schemaLocation="../../core/foundation/Foundation.xsd"/>
+  <import namespace="http://www.fixm.aero/flight/3.0" schemaLocation="./../../core/flight/FlightObject.xsd"/>
+  <import namespace="http://www.faa.aero/nas/3.1" schemaLocation="../../Nas-3.1-extensions/nas/Nas.xsd"/>
+  <include schemaLocation="TfmDataCoreTypes.xsd"/>
+  <simpleType name="TfmTfdmMessageType">
+    <annotation>
+      <documentation>This type defines the message content of the TFDM flight data being communicated as follows: FLTU -
+                     Flight Update Message, and FLTC - Cancel Message.</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="FLTU"/>
+      <enumeration value="FLTC"/>
+    </restriction>
+  </simpleType>
+  <complexType name="TfmTfdmFlightType">
+    <annotation>
+      <documentation>Defines extension of FIXM FlightType for TFDM.</documentation>
+    </annotation>
+    <complexContent>
+      <extension base="fx:FlightType">
+        <sequence>
+          <element name="departureNas" type="nas:NasDepartureType">
+            <annotation>
+              <documentation>Departure data.</documentation>
+            </annotation>
+          </element>
+          <element name="arrivalNas" type="nas:NasArrivalType">
+            <annotation>
+              <documentation>Arrival data.</documentation>
+            </annotation>
+          </element>
+          <element name="initialGateTimeDep" type="ff:TimeType" minOccurs="0">
+            <annotation>
+              <documentation>Airline reported initial gate time of departure - used also as part of flight's identification during its life cycle.</documentation>
+            </annotation>
+          </element>
+          <element name="targetTakeOffTime" type="ff:TimeType" minOccurs="0">
+            <annotation>
+              <documentation>Target take-off time.</documentation>
+            </annotation>
+          </element>
+          <element name="depStandAssignment" type="fb:FreeTextType" minOccurs="0">
+            <annotation>
+              <documentation>Field T16	Departure Stand Assignment	Ldd[d]- Gate.</documentation>
+            </annotation>
+          </element>
+          <element name="arrStandAssignment" type="fb:FreeTextType" minOccurs="0">
+            <annotation>
+              <documentation>Field T17	ArrivalStand Assignment	Ldd[d]- Gate.</documentation>
+            </annotation>
+          </element>
+          <element name="arrStandAvailable" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T18	Arrival Stand Availability.</documentation>
+            </annotation>
+          </element>
+          <element name="tmatRelinquish" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T19	TMAT Relinquish Indication.</documentation>
+            </annotation>
+          </element>
+          <element name="tmatMarkedForSub" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T20	TMAT Marked For Substitution Indication.</documentation>
+            </annotation>
+          </element>
+          <element name="accDepRwys" minOccurs="0">
+            <annotation>
+              <documentation>Field T22	List of Acceptable Departure Runways.</documentation>
+            </annotation>
+            <simpleType>
+              <list itemType="ff:RunwayNameType"/>
+            </simpleType>
+          </element>
+          <element name="unaccDepRwys" minOccurs="0">
+            <annotation>
+              <documentation>Field T23 List of Unacceptable Departure Runways.</documentation>
+            </annotation>
+            <simpleType>
+              <list itemType="ff:RunwayNameType"/>
+            </simpleType>
+          </element>
+          <element name="depReadiness" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T24	Departure Readiness Status.</documentation>
+            </annotation>
+          </element>
+          <element name="depIntentToHoldNonMove" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T25	Intent To Hold In The Airport Non-Movement Area During Departure.</documentation>
+            </annotation>
+          </element>
+          <element name="arrIntentToHoldNonMove" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T26	Intent To Hold In The Airport Non-Movement Area During Arrival.</documentation>
+            </annotation>
+          </element>
+          <element name="depIntentToHoldInMove" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T27	Intent To Hold In the Airport Movement Area During Departure.</documentation>
+            </annotation>
+          </element>
+          <element name="arrIntentToHoldInMove" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T28	Intent To Hold In the Airport Movement Area During Arrival.</documentation>
+            </annotation>
+          </element>
+          <element name="intentToBeDeiced" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T29	Intent For A Flight To Be De-Iced.</documentation>
+            </annotation>
+          </element>
+          <element name="intentedDeiceLocation" type="fb:FreeTextType" minOccurs="0">
+            <annotation>
+              <documentation>Field T30	Intended De-Icing Location Ldd[d]- Gate.</documentation>
+            </annotation>
+          </element>
+          <element name="intentedDepSpot" type="fb:FreeTextType" minOccurs="0">
+            <annotation>
+              <documentation>Field T31	Intended Departure Spot	Ldd[d]	"Gate".</documentation>
+            </annotation>
+          </element>
+          <element name="intentedArrSpot" type="fb:FreeTextType" minOccurs="0">
+            <annotation>
+              <documentation>Field T32	Intended Arrival Spot	Ldd[d]- Gate.</documentation>
+            </annotation>
+          </element>
+          <element name="intentReturnToGate" type="boolean" minOccurs="0">
+            <annotation>
+              <documentation>Field T33	Gate Return Intent.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="flight" type="fx:FlightType" substitutionGroup="fb:Feature"/>
+  <complexType name="TfmTerminalFlighDataType">
+    <sequence>
+      <element name="flight" type="tx:TfmTfdmFlightType">
+        <annotation>
+          <documentation></documentation>
+        </annotation>
+      </element>
+    </sequence>
+    <attribute name="source" type="string">
+      <annotation>
+        <documentation>Message source: Facility/System that originated the data.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="xmitTime" type="dateTime">
+      <annotation>
+        <documentation>The time that the individual messages were packed for transmission by TFMS.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="msgType" type="tx:TfmTfdmMessageType">
+      <annotation>
+        <documentation>Provides the message type attribute.</documentation>
+      </annotation>
+    </attribute>
+    <attributeGroup ref="tx:TfmFlightDataAttributeType"/>
+  </complexType>
+</schema>

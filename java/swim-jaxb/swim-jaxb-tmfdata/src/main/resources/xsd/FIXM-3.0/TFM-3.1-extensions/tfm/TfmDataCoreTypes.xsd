@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:fb="http://www.fixm.aero/base/3.0"
+        xmlns:ff="http://www.fixm.aero/foundation/3.0"
+        xmlns:tx="http://www.fixm.aero/tfm/3.1"
+        targetNamespace="http://www.fixm.aero/tfm/3.1"
+        version="2.0.4" 
+        elementFormDefault="qualified">
+  <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
+  <import namespace="http://www.fixm.aero/foundation/3.0" schemaLocation="./../../core/foundation/Foundation.xsd"/>
+  <import namespace="http://www.fixm.aero/flight/3.0" schemaLocation="./../../core/flight/FlightObject.xsd"/>
+   <annotation>
+      <documentation>
+         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         =========================================== 
+         All rights reserved. 
+          
+         Redistribution and use in source and binary forms, with or without modification, 
+         are permitted provided that the following conditions are met: 
+         * Redistributions of source code must retain the above copyright notice, this list 
+         of conditions and the disclaimer. 
+         * Redistributions in binary form must reproduce the above copyright notice, this 
+         list of conditions and the disclaimer in the documentation and/or other materials 
+         provided with the distribution. 
+         * The name of US FAA or the names of its contributors may not be used to endorse 
+         or promote products derived from this specification without specific prior written 
+         permission. 
+          
+         DISCLAIMER 
+          
+         THIS SPECIFICATION IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+         AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+         WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+         IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+         INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
+         TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
+         BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+         CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH 
+         DAMAGE. 
+          
+         ========================================== 
+         Editorial note: this license is an instance of the BSD license template as provided 
+         by the Open Source Initiative: 
+         http://www.opensource.org/licenses/bsd-license.php 
+          
+         The authoritative reference for FIXM is www.FIXM.aero. 
+          
+         Details on the US FAA: http://www.faa.gov/ 
+      </documentation>
+   </annotation>
+   <annotation>
+    <documentation>Contains basic extensions of FIXM types needed for TFMData Service.</documentation>
+  </annotation>
+  <simpleType name="TfmAirportIdType">
+    <annotation>
+      <documentation>An airport is 3 to 5 alphanumeric characters.</documentation>
+    </annotation>
+    <restriction base="ff:AerodromeNameType">
+      <pattern value="[a-zA-Z0-9]{3,5}[ ]{0,1}"/>
+    </restriction>
+  </simpleType>
+  <attributeGroup name="TfmFlightDataAttributeType">
+    <annotation>
+      <documentation>Defines the general attributes associated with each flight data message.</documentation>
+    </annotation>
+    <attribute name="sensitivity" type="tx:TfmSensitivityType" use="optional">
+      <annotation>
+        <documentation>Defines the sensitivity of the data for distribution: R - government agency only, A - all users
+                       including government, D - all users except government because duplicate.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="sourceFacility" type="fb:ProvenanceCentreType" use="optional">
+      <annotation>
+        <documentation>The facility/system that originated the data.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="sourceTimeStamp" type="ff:TimeType" use="optional">
+      <annotation>
+        <documentation>The sourceTimeStamp identifies the time the original message that triggered this Flight Data
+                       message to be sent was sent by the facility identified by attribute sourceFacility.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="airline" type="fb:CarrierIdentifierType" use="optional">
+      <annotation>
+        <documentation>Three character airline identifier. If the aircraft is not associated with an airline the value
+                       will be XXX.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="countryAirspace" type="fb:FreeTextType" use="optional">
+      <annotation>
+        <documentation>Comma delimited list of ICAO country codes indicating the airspace the flight traverses, takes
+                       off, or lands in.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="flightRef" type="fb:FreeTextType" use="optional">
+      <annotation>
+        <documentation>A reference number used to correlate the flight data messages.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="acid" type="fb:FlightIdentifierType" use="optional">
+      <annotation>
+        <documentation>Aircraft Identifier of the flight.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="cdmPart" type="boolean" use="optional">
+      <annotation>
+        <documentation>If true, the flight belongs to a CDM participant.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="depArpt" type="tx:TfmAirportIdType" use="optional">
+      <annotation>
+        <documentation>Flight's departure airport.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="arrArpt" type="tx:TfmAirportIdType" use="optional">
+      <annotation>
+        <documentation>Flight's arrival airport.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="sensReason" type="tx:TfmSensitivityReasonType" use="optional">
+      <annotation>
+        <documentation>Indicates the reason the message is sensitive: FM - Military flight, FS - sensitive flight, DR -
+                       data restriction. Note:FM and FS have precedence over DR. Only present in a sensitive=R message.</documentation>
+      </annotation>
+    </attribute>
+  </attributeGroup>
+  <simpleType name="TfmSensitivityType">
+    <annotation>
+      <documentation>Defines the sensitivity data for ATFD, TMID, ENVD or any other data distributed using SWIM
+                     standards.</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="R">
+        <annotation>
+          <documentation>Sensitive data for distribution to government agency only.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="A">
+        <annotation>
+          <documentation>Data that can be distributed to all users including delayed users.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="D">
+        <annotation>
+          <documentation>Duplication of sensitive data but sanitized, i.e. sensitive data removed. It can be distributed
+                         to all users except government agency.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="TfmSensitivityReasonType">
+    <annotation>
+      <documentation>Indicates the reason the message is sensitive: FM - Military flight, FS - sensitive flight, DR -
+                     data restriction. Note:FM and FS have precedence over DR. Only present in a sensitive=R message.</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="FM"/>
+      <enumeration value="FS"/>
+      <enumeration value="DR"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="TfmBusinessFunctionType">
+    <annotation>
+      <documentation>Defines the TFMData Service Business Functions.</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="TFMData:FlightData"/>
+      <enumeration value="TFMData:FlowInformation"/>
+      <enumeration value="TFMData:InternationalData"/>
+      <enumeration value="TFMData:TerminalFlightData"/>
+      <enumeration value="TFMData:RequestReply"/>
+      <enumeration value="TFMData:Status"/>
+    </restriction>
+  </simpleType>
+</schema>

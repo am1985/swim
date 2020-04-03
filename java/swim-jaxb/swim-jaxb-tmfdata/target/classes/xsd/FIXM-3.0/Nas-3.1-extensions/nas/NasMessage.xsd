@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+   attributeFormDefault="unqualified"
+   elementFormDefault="qualified"
+   targetNamespace="http://www.faa.aero/nas/3.1"
+   version="3.1.0"
+   xmlns="http://www.w3.org/2001/XMLSchema"
+   xmlns:fb="http://www.fixm.aero/base/3.0"
+   xmlns:ff="http://www.fixm.aero/foundation/3.0"
+   xmlns:fx="http://www.fixm.aero/flight/3.0"
+   xmlns:nas="http://www.faa.aero/nas/3.1"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   
+   <annotation>
+      <documentation>
+         Copyright (c) 2015 US Federal Aviation Administration (FAA) 
+         =========================================== 
+         All rights reserved. 
+          
+         Redistribution and use in source and binary forms, with or without modification, 
+         are permitted provided that the following conditions are met: 
+         * Redistributions of source code must retain the above copyright notice, this list 
+         of conditions and the disclaimer. 
+         * Redistributions in binary form must reproduce the above copyright notice, this 
+         list of conditions and the disclaimer in the documentation and/or other materials 
+         provided with the distribution. 
+         * The name of US FAA or the names of its contributors may not be used to endorse 
+         or promote products derived from this specification without specific prior written 
+         permission. 
+          
+         DISCLAIMER 
+          
+         THIS SPECIFICATION IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+         AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+         WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+         IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+         INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
+         TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
+         BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+         CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+         ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH 
+         DAMAGE. 
+          
+         ========================================== 
+         Editorial note: this license is an instance of the BSD license template as provided 
+         by the Open Source Initiative: 
+         http://www.opensource.org/licenses/bsd-license.php 
+          
+         The authoritative reference for FIXM is www.FIXM.aero. 
+          
+         Details on the US FAA: http://www.faa.gov/ 
+      </documentation>
+   </annotation>
+   <import namespace="http://www.fixm.aero/base/3.0" schemaLocation="./../../core/base/Base.xsd"/>
+   <import namespace="http://www.fixm.aero/flight/3.0" schemaLocation="./../../core/flight/FlightObject.xsd"/>
+   <import namespace="http://www.fixm.aero/foundation/3.0" schemaLocation="./../../core/foundation/Foundation.xsd"/>
+   <annotation>
+      <documentation>
+         This package contains a basic message definition prototype. Each message can contain 
+         a FIXM flight and be part of a message collection as a means to transport FIXM data. 
+         It is included as part of the NAS extension to allow basic messaging capability that 
+         is not agreed upon in the Core FIXM. 
+      </documentation>
+   </annotation>
+
+   <complexType abstract="true" name="AbstractMessageType">
+      <annotation>
+         <documentation>
+            The Message type is the smallest unit of data transmission between components. It 
+            contains identifying metadata and a payload. It is expected that extensions will 
+            extend this to define their own message types, including their own payloads. 
+         </documentation>
+      </annotation>
+      <sequence>
+         <element name="metadata" type="nas:MessageMetadataType" minOccurs="0" maxOccurs="1" > 
+            <annotation>
+               <documentation>
+                  The MessageMetadata provides a unique message identifier, the origin of the message 
+                  in time and location, 
+                the system
+                that produced the message, and the time span over which the message data is valid.
+               </documentation>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   <element name="AbstractMessage" type="nas:AbstractMessageType" /> 
+
+   <complexType name="FlightMessageType">
+      <annotation>
+         <documentation>
+            FlightMessage is used to transmit FIXM flight objects. 
+         </documentation>
+      </annotation>
+      <complexContent>
+         <extension base="nas:AbstractMessageType">
+            <sequence>
+               <element name="flight" type="fx:FlightType" minOccurs="1" maxOccurs="1" > 
+                  <annotation>
+                     <documentation>
+                        Flight that is contained within the Flight message. 
+                     </documentation>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <element name="FlightMessage" type="nas:FlightMessageType" substitutionGroup="nas:AbstractMessage" /> 
+
+   <complexType name="MessageCollectionType">
+      <annotation>
+         <documentation>
+            The MessageCollection type is a mechanism for aggregating messages to be transmitted 
+            as a group. This is useful 
+                both to aggregate messages about one flight, and to pack many messages together for transmission efficiency.
+         </documentation>
+      </annotation>
+      <sequence>
+         <element name="message" type="nas:AbstractMessageType" minOccurs="1" maxOccurs="unbounded" > 
+            <annotation>
+               <documentation>
+                  The MessageCollection type is a mechanism for aggregating messages to be transmitted 
+                  as a group. This is useful 
+                both to aggregate messages about one flight, and to pack many messages together for transmission efficiency.
+               </documentation>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   <element name="MessageCollection" type="nas:MessageCollectionType" /> 
+
+   <complexType name="MessageMetadataType">
+      <annotation>
+         <documentation>
+            The MessageMetadata provides a unique message identifier, the origin of the message 
+            in time and location, 
+                the system
+                that produced the message, and the time span over which the message data is valid.
+         </documentation>
+      </annotation>
+      <sequence>
+         <element name="trigger" type="nas:TriggerType" minOccurs="0" maxOccurs="1" > 
+            <annotation>
+               <documentation>
+                  Container for Message Trigger information such as the type of trigger and timestamp. 
+                  
+               </documentation>
+            </annotation>
+         </element>
+      </sequence>
+      <attribute name="messageType" type="fb:FreeTextType" use="optional" > 
+         <annotation>
+            <documentation>
+               Type of message. For example track update, flight plan amendment. 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="sensitivity" use="optional" > 
+         <annotation>
+            <documentation>
+               Sensitivity of the message 
+            </documentation>
+         </annotation>
+         <simpleType>
+            <restriction base="fb:FreeTextType">
+               <pattern value="[A-Z]"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+      <attributeGroup ref="fb:ProvenanceType" > 
+         <annotation>
+            <documentation>
+               Message provenance data. Can be used by system to describe details involved in sending 
+               the message including source, center and system.. 
+            </documentation>
+         </annotation>
+      </attributeGroup>
+   </complexType>
+   <element name="MessageMetadata" type="nas:MessageMetadataType" /> 
+
+   <complexType name="TriggerType">
+      <annotation>
+         <documentation>
+            Container for Message Trigger information such as the type of trigger and timestamp. 
+            
+         </documentation>
+      </annotation>
+      <attribute name="timestamp" type="ff:TimeType" use="optional" > 
+         <annotation>
+            <documentation>
+               Trigger timestamp 
+            </documentation>
+         </annotation>
+      </attribute>
+      <attribute name="triggerType" type="fb:FreeTextType" use="optional" > 
+         <annotation>
+            <documentation>
+               Describes the message trigger type. 
+            </documentation>
+         </annotation>
+      </attribute>
+   </complexType>
+   <element name="Trigger" type="nas:TriggerType" /> 
+</schema>
